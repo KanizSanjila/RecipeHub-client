@@ -10,61 +10,125 @@ export default function AddRecipe() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
 
+  // const onSubmit = async (data) => {
+  //   setLoading(true);
+  //   try {
+  //     // ১. ইমেজ ফাইল চেক ও ImgBB-তে আপলোড
+  //     if (!data.recipeImage || !data.recipeImage[0]) {
+  //       toast.error("Please upload a recipe image");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const imageFile = data.recipeImage[0];
+  //     const uploadedImageUrl = await uploadImage(imageFile);
+
+  //     if (!uploadedImageUrl) {
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const recipeData = {
+  //       name: data.recipeName.trim(),
+  //       image: uploadedImageUrl,
+  //       category: data.category,
+  //       cuisineType: data.cuisineType,
+  //       difficulty: data.difficulty,
+  //       prepTime: parseInt(data.prepTime),
+  //       ingredients: data.ingredients.split("\n").map(item => item.trim()).filter(Boolean),
+  //       instructions: data.instructions.trim(),
+  //       createdAt: new Date(),
+  //     };
+
+  //     // ৩. সার্ভারে POST রিকোয়েস্ট পাঠানো
+  //     const response = await fetch("http://localhost:5000/recipes", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(recipeData),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (result.insertedId) {
+  //       toast.success("Recipe added successfully!");
+  //       reset(); // ফর্ম ক্লিয়ার করার জন্য
+  //     } else {
+  //       toast.error("Failed to add recipe to database");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Something went wrong!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      // ১. ইমেজ ফাইল চেক ও ImgBB-তে আপলোড
-      if (!data.recipeImage || !data.recipeImage[0]) {
-        toast.error("Please upload a recipe image");
-        setLoading(false);
-        return;
-      }
-
-      const imageFile = data.recipeImage[0];
-      const uploadedImageUrl = await uploadImage(imageFile);
-
-      if (!uploadedImageUrl) {
-        setLoading(false);
-        return;
-      }
-
-      const recipeData = {
-        name: data.recipeName.trim(),
-        image: uploadedImageUrl,
-        category: data.category,
-        cuisineType: data.cuisineType,
-        difficulty: data.difficulty,
-        prepTime: parseInt(data.prepTime),
-        ingredients: data.ingredients.split("\n").map(item => item.trim()).filter(Boolean),
-        instructions: data.instructions.trim(),
-        createdAt: new Date(),
-      };
-
-      // ৩. সার্ভারে POST রিকোয়েস্ট পাঠানো
-      const response = await fetch("http://localhost:5000/recipes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(recipeData),
-      });
-
-      const result = await response.json();
-
-      if (result.insertedId) {
-        toast.success("Recipe added successfully!");
-        reset(); // ফর্ম ক্লিয়ার করার জন্য
-      } else {
-        toast.error("Failed to add recipe to database");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
-    } finally {
+  setLoading(true);
+  try {
+    // -------------------------------------------------------------
+    // 🚧 সাময়িকভাবে ImgBB আপলোড বন্ধ করে ডিরেক্ট লিংক বসানো হলো
+    // -------------------------------------------------------------
+    
+    // ১. তোমার আসল uploadImage কলটি কমেন্ট আউট করে রাখো:
+    /*
+    if (!data.recipeImage || !data.recipeImage[0]) {
+      toast.error("Please upload a recipe image");
       setLoading(false);
+      return;
     }
-  };
+    const imageFile = data.recipeImage[0];
+    const uploadedImageUrl = await uploadImage(imageFile);
+    if (!uploadedImageUrl) {
+      setLoading(false);
+      return;
+    }
+    */
 
+    // ২. টেস্ট করার জন্য সরাসরি একটি অনলাইন ইমেজ লিংক বসিয়ে দাও:
+    const uploadedImageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500"; 
+
+    // -------------------------------------------------------------
+
+    // ৩. বাকি কোড আগের মতোই থাকবে (যা ডাটাবেজে ডাটা পাঠাবে)
+    const recipeData = {
+      name: data.recipeName.trim(),
+      image: uploadedImageUrl, // এখানে এখন Unsplash-এর লিংকটি চলে যাবে
+      category: data.category,
+      cuisineType: data.cuisineType,
+      difficulty: data.difficulty,
+      prepTime: parseInt(data.prepTime),
+      ingredients: data.ingredients.split("\n").map(item => item.trim()).filter(Boolean),
+      instructions: data.instructions.trim(),
+      createdAt: new Date(),
+    };
+
+    // সার্ভারে POST রিকোয়েস্ট পাঠানো
+    const response = await fetch("http://localhost:5000/recipes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(recipeData),
+    });
+
+    const result = await response.json();
+
+    if (result.insertedId) {
+      toast.success("Recipe added successfully! (Test Mode)");
+      reset(); // ফর্ম ক্লিয়ার হবে
+    } else {
+      toast.error("Failed to add recipe to database");
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Something went wrong!");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 my-10">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
