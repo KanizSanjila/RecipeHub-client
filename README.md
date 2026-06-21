@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#  RecipeHub — Recipe Sharing Platform (Client-Side)
 
-## Getting Started
+RecipeHub is a dynamic, fully responsive web application where food enthusiasts can create, share, discover, and manage their favorite recipes. It offers a centralized space for culinary inspiration, featuring premium membership tiers, secured payment processing, interactive community features, and a robust admin management system.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+##  Live Demo & Deployments
+- **Live Site URL:** 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+##  Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+###  For Users (Normal & Premium)
+- **Dynamic Recipe Feed:** Browse recipes with advanced server-side pagination and category filtering (`MongoDB $in`).
+- **Recipe Details:** View full instructions, ingredients, like recipes, or report inappropriate content via interactive modals.
+- **Recipe Management:** Normal users can publish up to **2 recipes**. Upgrading to Premium unlocks unlimited recipe creations.
+- **Stripe Integration:** Single recipe purchases and seamless Premium Membership upgrades with secure transaction logging.
+- **Personalized Dashboards:** Tracks user analytics (Total Recipes, Favorites, Likes) along with custom profiles (ImgBB upload integration).
+- **Favorites & Bookmarks:** Save recipes to a personalized wishlist.
 
-## Learn More
+###  For Admins
+- **User Management:** Monitor community activity with abilities to block/unblock users.
+- **Recipe Moderation:** Edit, delete, or promote high-quality recipes to the **Featured Recipes** section on the Home Page.
+- **Report Analytics:** Dismiss or take action on reported spam, offensive content, or copyright violations.
 
-To learn more about Next.js, take a look at the following resources:
+### Core Enhancements
+- **Dark / Light Theme:** Native theme toggle for comfortable night-time cooking.
+- **Smooth Animations:** Integrated with `Framer Motion` for high-quality, professional UI transitions.
+- **Secure Authentication:** Built using robust JWT / Better Auth practices ensuring route protections persist even after page reloads.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack & Libraries Used
 
-## Deploy on Vercel
+- **Framework:** React.js / Next.js (App Router)
+- **Styling:** Tailwind CSS, Lucide React (Icons)
+- **Animation:** Framer Motion
+- **State & Context:** React Context API
+- **Authentication:** JWT Authentication / Better Auth
+- **Payment Gateway:** Stripe Checkout
+- **Database Layer:** MongoDB (connected via secure server APIs)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Getting Started & Local Installation
+
+Follow these steps to run the client-side of RecipeHub locally:

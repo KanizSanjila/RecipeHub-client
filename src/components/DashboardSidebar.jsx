@@ -1,9 +1,8 @@
 import Logo from "@/components/Logo";
 import { useSession } from "@/lib/auth-client";
-import { Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaBuilding, FaCalendarAlt, FaHistory, FaHome, FaPlus, FaSignOutAlt, FaUsers, FaUserShield } from "react-icons/fa";
+import { FaBookOpen, FaChartBar, FaHeart, FaHome, FaMoneyCheckAlt, FaPlus, FaShoppingBag, FaSignOutAlt, FaTachometerAlt, FaUserCircle, FaUsers, FaUtensils } from "react-icons/fa";
 
 const DashboardSidebar = () => {
       const { data: session } = useSession();
@@ -12,17 +11,20 @@ const DashboardSidebar = () => {
       }
     
             const userMenu = [
-        { key: "overview", label: "Overview", icon: FaUsers, href: "/dashboard/user" },
-        { key: "organization", label: "Organization", icon: FaBuilding, href: "/dashboard/organizer/organization" },
-        { key: "add-event", label: "Add Event", icon: FaPlus, href: "/dashboard/organizer/add-event" },
-        { key: "manage-events", label: "Manage Events", icon: FaCalendarAlt, href: "/dashboard/organizer/manage-events" },
-        { key: "attendees", label: "Attendees", icon: FaUsers, href: "/dashboard/organizer/attendees" },
+        { key: "overview", label: "Overview", icon:  FaTachometerAlt, href: "/dashboard/user" },
+        { key: "add-recipe", label: "Add Recipe ", icon: FaPlus, href: "/dashboard/user/add-recipe" },
+        { key: "my-recipes", label: "My Recipes", icon: FaBookOpen, href: "/dashboard/user/my-recipes" },
+        { key: "my-favorites", label: "My Favorites", icon:   FaHeart, href: "/dashboard/user/my-favorites" },
+        { key: "my-purchased-recipes", label: "My purchased recipes", icon:  FaShoppingBag, href: "/dashboard/user/my-purchased-recipes" },
+        { key: "profile", label: "Profile", icon:  FaUserCircle, href: "/dashboard/user/profile" },
       ]
     
         const adminMenu = [
-        { key: "users", label: "Users", icon: FaUserShield, href: "/dashboard/users" },
-        { key: "events", label: "Approve Events", icon: FaCalendarAlt, href: "/dashboard/events" },
-        { key: "transactions", label: "Transaction Logs", icon: FaHistory, href: "/dashboard/transactions" },
+        { key: "overview", label: "Overview", icon:  FaTachometerAlt, href: "/dashboard/overview" },
+        { key: "manage-users", label: "Manage Users", icon: FaUsers, href: "/dashboard/manage-users" },
+        { key: "manage-recipes", label: "Manage Recipes", icon: FaUtensils, href: "/dashboard/manage-recipes" },
+        { key: "reports", label: "Reports", icon:  FaChartBar, href: "/dashboard/reports" },
+        { key: "transaction", label: "Transaction", icon:  FaMoneyCheckAlt, href: "/dashboard/transaction" },
       ]
             const role = session?.user?.role;
     
@@ -62,7 +64,7 @@ const DashboardSidebar = () => {
       <nav className="flex-grow overflow-y-auto px-3 py-4 space-y-1">
         <p className="text-[10px] font-bold uppercase tracking-widest px-3 pb-2">Navigation</p>
        {
-        userMenu?.map(({ key, label, icon: Icon, href })=>{
+        menuItems?.map(({ key, label, icon: Icon, href })=>{
 
             return(
                  <Link

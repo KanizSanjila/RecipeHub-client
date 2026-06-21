@@ -1,63 +1,144 @@
 import { Card, Button } from "@heroui/react";
-import { FaCrown, FaCalendarAlt, FaUsers, FaDollarSign } from "react-icons/fa"
+
+import {
+  FaCrown,
+  FaUtensils,
+  FaHeart,
+  FaThumbsUp,
+} from "react-icons/fa";
 
 const UserOverviewItems = () => {
-    const stats = {
-        totalEvents: 15,
-        totalAttendees: 450,
-        totalRevenue: 25000,
-        totalSoldTickets: 780,
-    };
+  const stats = {
+    totalRecipes: 15,
+    totalFavorites: 450,
+    totalLikes: 2500,
+  };
 
-    const isPremium = false;
+  const isPremium = false;
 
-    return (
-        <div className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="glass border-white/5" radius="lg">
-                    <div className="p-6 flex flex-row items-center justify-between">
-                        <div className="space-y-1">
-                            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Hosted Events</span>
-                            <h2 className="text-3xl font-extrabold">{stats.totalEvents}</h2>
-                        </div>
-                        <div className="p-3.5 bg-pink-500/10 text-pink-400 rounded-2xl border border-pink-500/20"><FaCalendarAlt size={24} /></div>
-                    </div>
-                </Card>
-                <Card className="glass border-white/5" radius="lg">
-                    <div className="p-6 flex flex-row items-center justify-between">
-                        <div className="space-y-1">
-                            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Ticket Sales</span>
-                            <h2 className="text-3xl font-extrabold">{stats.totalAttendees}</h2>
-                        </div>
-                        <div className="p-3.5 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20"><FaUsers size={24} /></div>
-                    </div>
-                </Card>
-                <Card className="glass border-white/5" radius="lg">
-                    <div className="p-6 flex flex-row items-center justify-between">
-                        <div className="space-y-1">
-                            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Accumulated Revenue</span>
-                            <h2 className="text-3xl font-extrabold">{`$${stats.totalRevenue.toFixed(2)}`}</h2>
-                        </div>
-                        <div className="p-3.5 bg-green-500/10 text-green-400 rounded-2xl border border-green-500/20"><FaDollarSign size={24} /></div>
-                    </div>
-                </Card>
+  return (
+    <div className="space-y-6 mt-6">
+       <div className="border-b border-white/5 pb-5">
+  <h1 className="text-3xl font-extrabold">
+    Dashboard Overview
+  </h1>
+
+  <p className="text-zinc-400 mt-2">
+    Track your recipes, favorites, and engagement in one place.
+  </p>
+</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* Total Recipes */}
+        <Card
+          className="bg-gradient-to-br from-orange-500/10 to-red-500/5 border border-orange-500/10"
+          radius="lg"
+        >
+          <div className="p-6 flex justify-between items-center">
+
+            <div>
+              <p className="text-xs uppercase text-zinc-400 font-semibold">
+                Total Recipes
+              </p>
+
+              <h2 className="text-3xl font-bold">
+                {stats.totalRecipes}
+              </h2>
             </div>
 
-            {!isPremium && (
-                <Card className="border border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 via-amber-600/5 to-transparent relative overflow-hidden" radius="lg">
-                    <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-6 z-10">
-                        <div className="space-y-2">
-                            <h3 className="text-xl font-bold flex items-center gap-2"><FaCrown className="text-yellow-400" /> Unlock Unlimited Event Creation</h3>
-                            <p className=" text-xs max-w-xl leading-relaxed">Standard organizer accounts are limited to <strong>3 events</strong>. Upgrade to our Premium Package for <strong>$49.00</strong> to host unlimited events.</p>
-                        </div>
-                        <Button className="bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold h-11 px-6 shadow-lg shadow-yellow-500/10 shrink-0" radius="lg">
-                            Upgrade to Premium
-                        </Button>
-                    </div>
-                </Card>
-            )}
-        </div>
-    )
-}
+            <div className="p-4 rounded-2xl bg-orange-500/15 text-orange-400">
+              <FaUtensils size={24} />
+            </div>
 
-export default UserOverviewItems
+          </div>
+        </Card>
+
+        {/* Favorites */}
+        <Card
+          className="bg-gradient-to-br from-pink-500/10 to-rose-500/5 border border-pink-500/10"
+          radius="lg"
+        >
+          <div className="p-6 flex justify-between items-center">
+
+            <div>
+              <p className="text-xs uppercase text-zinc-400 font-semibold">
+                Total Favorites
+              </p>
+
+              <h2 className="text-3xl font-bold">
+                {stats.totalFavorites}
+              </h2>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-pink-500/15 text-pink-400">
+              <FaHeart size={24} />
+            </div>
+
+          </div>
+        </Card>
+
+        {/* Likes */}
+        <Card
+          className="bg-gradient-to-br from-emerald-500/10 to-green-500/5 border border-green-500/10"
+          radius="lg"
+        >
+          <div className="p-6 flex justify-between items-center">
+
+            <div>
+              <p className="text-xs uppercase text-zinc-400 font-semibold">
+                Total Likes Received
+              </p>
+
+              <h2 className="text-3xl font-bold">
+                {stats.totalLikes}
+              </h2>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-green-500/15 text-green-400">
+              <FaThumbsUp size={24} />
+            </div>
+
+          </div>
+        </Card>
+
+      </div>
+
+      {!isPremium && (
+        <Card
+          className="overflow-hidden border border-yellow-500/20 bg-gradient-to-r from-yellow-500/10 via-orange-500/5 to-transparent"
+          radius="lg"
+        >
+          <div className="p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+            <div>
+
+              <h3 className="text-2xl font-bold flex items-center gap-3">
+                <FaCrown className="text-yellow-400" />
+
+                Go Premium
+              </h3>
+
+              <p className="mt-2 text-sm text-zinc-400 max-w-xl">
+                Free users can publish up to
+                <strong> 3 recipes</strong>.
+                Upgrade to Premium and unlock
+                unlimited recipe publishing.
+              </p>
+
+            </div>
+
+            <Button
+              radius="lg"
+              className="bg-yellow-500 text-black font-bold px-8 h-12"
+            >
+              Upgrade Now
+            </Button>
+
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+export default UserOverviewItems;
