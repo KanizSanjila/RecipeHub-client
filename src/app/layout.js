@@ -28,8 +28,6 @@ export default function RootLayout({ children }) {
     >
       {/* 🎯 ৩. এখানে bg-white এবং dark:bg-zinc-950 দিয়ে গ্লোবাল ব্যাকগ্রাউন্ড সেট করা হলো */}
       <body className="min-h-full flex flex-col bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-50 transition-colors duration-300">
-        
-        {/* 🎯 ৪. পুরো বডি কন্টেন্টকে ThemeProvider দিয়ে র্যাপ (Wrap) করে দেওয়া হলো */}
         <ThemeProvider>
           <main className="flex-grow flex flex-col">{children}</main>
           <Toaster />
