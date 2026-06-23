@@ -96,7 +96,7 @@ const AllRecipesPage = () => {
                     </span>
                   </div>
                     <Link 
-        href={`/recipes/${recipe._id}`} // 👈 আইডি অনুযায়ী সিঙ্গেল পেজের ডাইনামিক লিংক
+        href={`/all-recipes/${recipe._id}`} 
         className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-1 text-center shadow-sm"
       >
         View Details

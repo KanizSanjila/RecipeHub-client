@@ -147,9 +147,9 @@ export default function MyRecipes() {
                  text-sm">Prep Time: {recipe.prepTime ? `${recipe.prepTime} mins` : "N/A"}</p>
 
                 <div className="flex gap-2 mt-3">
-                  <Button as={Link} href={`/recipes/${recipe._id}`} className="flex-1 text-xs" startContent={<FaEye />}>
+                  <Link href={`/all-recipes/${recipe._id}`} className="flex-1 text-xs">
                     View
-                  </Button>
+                  </Link>
 
                   <Button onClick={() => handleEditClick(recipe)} color="warning" variant="flat" className="flex-1 text-xs" startContent={<FaEdit />} >
                     Edit
