@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Loader2, Plus, Clock, ChefHat, Layers } from "lucide-react";
 import { uploadImage } from "@/utils/uploadImage";
+import { useSession } from "@/lib/auth-client";
 
 export default function AddRecipe() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -65,47 +66,37 @@ export default function AddRecipe() {
   //   }
   // };
 
-  const onSubmit = async (data) => {
+// কম্পোনেন্টের ভেতরে হুকটি এভাবে কল করা আছে নিশ্চিত করো:
+const session = useSession();
+const user = session?.data?.user; // এর ভেতর ইমেইল, নাম সব থাকে
+
+const onSubmit = async (data) => {
+  // 🛑 সেফটি চেক: ইউজার লগইন না থাকলে আটকে দেবে
+  if (!user?.email) {
+    return toast.error("Please login first to add a recipe!");
+  }
+
   setLoading(true);
   try {
-    // -------------------------------------------------------------
-    // 🚧 সাময়িকভাবে ImgBB আপলোড বন্ধ করে ডিরেক্ট লিংক বসানো হলো
-    // -------------------------------------------------------------
-    
-    // ১. তোমার আসল uploadImage কলটি কমেন্ট আউট করে রাখো:
-    /*
-    if (!data.recipeImage || !data.recipeImage[0]) {
-      toast.error("Please upload a recipe image");
-      setLoading(false);
-      return;
-    }
-    const imageFile = data.recipeImage[0];
-    const uploadedImageUrl = await uploadImage(imageFile);
-    if (!uploadedImageUrl) {
-      setLoading(false);
-      return;
-    }
-    */
-
-    // ২. টেস্ট করার জন্য সরাসরি একটি অনলাইন ইমেজ লিংক বসিয়ে দাও:
     const uploadedImageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500"; 
 
-    // -------------------------------------------------------------
-
-    // ৩. বাকি কোড আগের মতোই থাকবে (যা ডাটাবেজে ডাটা পাঠাবে)
     const recipeData = {
       name: data.recipeName.trim(),
-      image: uploadedImageUrl, // এখানে এখন Unsplash-এর লিংকটি চলে যাবে
+      image: uploadedImageUrl, 
       category: data.category,
       cuisineType: data.cuisineType,
       difficulty: data.difficulty,
       prepTime: parseInt(data.prepTime),
       ingredients: data.ingredients.split("\n").map(item => item.trim()).filter(Boolean),
       instructions: data.instructions.trim(),
+      
+      // 🔥 Better-Auth থেকে ডাইনামিকালি লগইন করা ইউজারের আসল ইমেইল বসে যাবে!
+      authorEmail: user.email, 
+      
       createdAt: new Date(),
     };
 
-    // সার্ভারে POST রিকোয়েস্ট পাঠানো
+    // সার্ভারে POST রিকোয়েস্ট পাঠানো
     const response = await fetch("http://localhost:5000/recipes", {
       method: "POST",
       headers: {
@@ -116,11 +107,12 @@ export default function AddRecipe() {
 
     const result = await response.json();
 
-    if (result.insertedId) {
-      toast.success("Recipe added successfully! (Test Mode)");
-      reset(); // ফর্ম ক্লিয়ার হবে
+    if (response.ok && result.insertedId) {
+      toast.success("Recipe added successfully!");
+      if (typeof reset === "function") reset(); 
     } else {
-      toast.error("Failed to add recipe to database");
+      // লিমিট শেষ হয়ে গেলে ব্যাকএন্ডের কাস্টম ৪MD/৪৩ মেসেজটি এখানে দেখাবে
+      toast.error(result.message || "Failed to add recipe");
     }
   } catch (error) {
     console.error(error);
