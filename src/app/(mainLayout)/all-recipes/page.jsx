@@ -2,18 +2,23 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { FaHeart, FaBookmark, FaExclamationTriangle } from "react-icons/fa";
 
 const AllRecipesPage = () => {
   const [allRecipes, setAllRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // 🎯 ১. ফিল্টারিং এর জন্য স্টেট (ডিফল্ট "All")
   const [selectedCategory, setSelectedCategory] = useState("All");
+  
+  // 🎯 তোমার সেশন অনুযায়ী কারেন্ট ইউজারের ইমেইল এখানে বসাবে
+  const currentUserEmail = "chef.user@example.com"; 
+
+  // ব্যাকএন্ড URL
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/all-recipes");
+        const response = await fetch(`${backendUrl}/all-recipes`);
         if (!response.ok) throw new Error("Failed to fetch all recipes");
         
         const data = await response.json();
@@ -27,9 +32,101 @@ const AllRecipesPage = () => {
     };
 
     fetchAllRecipes();
-  }, []);
+  }, [backendUrl]);
 
-  // 🎯 ২. তোমার দেওয়া ক্যাটাগরি অনুযায়ী পিওর ক্লায়েন্ট-সাইড ফিল্টারিং লজিক
+  // ==========================================
+  // ❤️ ১. লাইক হ্যান্ডলার (PATCH)
+  // ==========================================
+  const handleLike = async (recipeId) => {
+    try {
+      const response = await fetch(`${backendUrl}/recipes/${recipeId}/like`, {
+        method: "PATCH",
+      });
+
+      if (response.ok) {
+        setAllRecipes((prevRecipes) =>
+          prevRecipes.map((recipe) =>
+            recipe._id === recipeId
+              ? { ...recipe, likesCount: (recipe.likesCount || 0) + 1 }
+              : recipe
+          )
+        );
+        toast.success("Liked the recipe! ❤️");
+      }
+    } catch (error) {
+      console.error("Error liking recipe:", error);
+      toast.error("Failed to like recipe");
+    }
+  };
+
+  // ==========================================
+  // ⭐ ২. ফেভারিট হ্যান্ডলার (POST)
+  // ==========================================
+  const handleFavorite = async (recipe) => {
+    try {
+      const response = await fetch(`${backendUrl}/favorites`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userEmail: currentUserEmail,
+          recipeId: recipe._id,
+          recipeName: recipe.recipeName,
+        }),
+      });
+
+      if (response.ok) {
+        // UI-তে ইনস্ট্যান্ট ফেভারিট কাউন্ট বাড়িয়ে দেওয়া
+        setAllRecipes((prevRecipes) =>
+          prevRecipes.map((r) =>
+            r._id === recipe._id
+              ? { ...r, favoritesCount: (r.favoritesCount || 0) + 1 }
+              : r
+          )
+        );
+        toast.success("Added to Favorites! ⭐");
+      }
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+      toast.error("Failed to add to favorites");
+    }
+  };
+
+  // ==========================================
+  // 🚨 ৩. রিপোর্ট হ্যান্ডলার (POST)
+  // ==========================================
+  const handleReport = async (recipeId) => {
+    const reason = prompt("Enter the reason for reporting this recipe:");
+    if (!reason) return; 
+
+    try {
+      const response = await fetch(`${backendUrl}/reports`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipeId: recipeId,
+          userEmail: currentUserEmail,
+          reason: reason,
+        }),
+      });
+
+      if (response.ok) {
+        // UI-তে ইনস্ট্যান্ট রিপোর্ট কাউন্ট বাড়িয়ে দেওয়া
+        setAllRecipes((prevRecipes) =>
+          prevRecipes.map((recipe) =>
+            recipe._id === recipeId
+              ? { ...recipe, reportsCount: (recipe.reportsCount || 0) + 1 }
+              : recipe
+          )
+        );
+        toast.success("Recipe reported successfully 🚨");
+      }
+    } catch (error) {
+      console.error("Error reporting recipe:", error);
+      toast.error("Failed to submit report");
+    }
+  };
+
+  // ফিল্টারিং লজিক
   const filteredRecipes = selectedCategory === "All"
     ? allRecipes
     : allRecipes.filter((recipe) => recipe.category?.toLowerCase() === selectedCategory.toLowerCase());
@@ -53,7 +150,6 @@ const AllRecipesPage = () => {
             <p className="mt-2 text-sm text-gray-500">Explore our entire collection of amazing recipes.</p>
           </div>
           
-          {/* 🎛️ ৩. তোমার দেওয়া নির্দিষ্ট ৪টি ক্যাটাগরি ড্রপডাউন UI */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-xl">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category:</span>
@@ -70,14 +166,13 @@ const AllRecipesPage = () => {
               </select>
             </div>
 
-            {/* ফিল্টার অনুযায়ী ডাইনামিক কাউন্ট */}
             <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-3 py-2 rounded-xl text-center">
               Showing: {filteredRecipes.length} Recipes
             </span>
           </div>
         </div>
 
-        {/* 🎴 ৪. ফিল্টার করা রেসিপির কার্ড গ্রিড */}
+        {/* রেসিপির কার্ড গ্রিড */}
         {filteredRecipes.length === 0 ? (
           <p className="text-center text-gray-500 py-10">No recipes found for "{selectedCategory}" category.</p>
         ) : (
@@ -85,9 +180,9 @@ const AllRecipesPage = () => {
             {filteredRecipes.map((recipe) => (
               <div 
                 key={recipe._id} 
-                className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
               >
-                {/* ইমেজ */}
+                {/* ইমেজ সেকশন */}
                 <div className="h-44 w-full relative bg-gray-200">
                   <img
                     className="h-full w-full object-cover"
@@ -99,7 +194,7 @@ const AllRecipesPage = () => {
                   </span>
                 </div>
 
-                {/* কন্টেন্ট */}
+                {/* কন্টেন্ট সেকশন */}
                 <div className="p-4 flex-grow flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mb-1">
@@ -110,7 +205,42 @@ const AllRecipesPage = () => {
                     </h3>
                   </div>
 
-                  {/* টাইম এবং ডিফিকাল্টি ലെവൽ */}
+                  {/* 📊 👍 Likes, 🔖 Favorites, 🚨 Reports কাউন্টার গ্রিড */}
+                  <div className="grid grid-cols-3 gap-1 items-center justify-between mt-4 bg-white p-2 rounded-xl border border-gray-100 text-center">
+                    
+                    {/* Like Button */}
+                    <button 
+                      onClick={() => handleLike(recipe._id)}
+                      className="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:text-red-500 transition-colors duration-200"
+                      title="Like Recipe"
+                    >
+                      <FaHeart size={14} className={recipe.likesCount > 0 ? "text-red-500" : "text-gray-300"} />
+                      <span className="text-[11px] font-bold text-gray-700">{recipe.likesCount || 0}</span>
+                    </button>
+
+                    {/* Favorite Button */}
+                    <button 
+                      onClick={() => handleFavorite(recipe)}
+                      className="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:text-amber-500 transition-colors duration-200 border-x border-gray-100"
+                      title="Add to Favorites"
+                    >
+                      <FaBookmark size={13} className={recipe.favoritesCount > 0 ? "text-amber-500" : "text-gray-300"} />
+                      <span className="text-[11px] font-bold text-gray-700">{recipe.favoritesCount || 0}</span>
+                    </button>
+
+                    {/* Report Button */}
+                    <button 
+                      onClick={() => handleReport(recipe._id)}
+                      className="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:text-orange-600 transition-colors duration-200"
+                      title="Report Recipe"
+                    >
+                      <FaExclamationTriangle size={13} className={recipe.reportsCount > 0 ? "text-orange-500" : "text-gray-300"} />
+                      <span className="text-[11px] font-bold text-gray-700">{recipe.reportsCount || 0}</span>
+                    </button>
+
+                  </div>
+
+                  {/* টাইম এবং ডিফিকাল্টি লেভেল */}
                   <div className="mt-4 pt-3 border-t border-gray-200/60 flex items-center justify-between text-xs text-gray-600 mb-4">
                     <span className="flex items-center gap-1">
                        {recipe.preparationTime ? `${recipe.preparationTime}m` : "N/A"}

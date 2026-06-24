@@ -1,7 +1,6 @@
 import { stripe } from '@/lib/stripe'
-import { redirect } from 'next/navigation';
 import { Card, CardHeader, CardFooter, Button } from "@heroui/react";
-import { FaCrown, FaCheckCircle, FaArrowRight, FaCheck, FaUtensils } from "react-icons/fa";
+import { FaCrown, FaArrowRight, FaCheck, FaUtensils } from "react-icons/fa";
 import Link from 'next/link';
 
 export default async function Success({ searchParams }) {
@@ -23,6 +22,24 @@ const resolvedSearchParams = await searchParams;
 
   // ইমেইলটি বের করার জন্য ব্যাকআপ লজিক (যা কখনোই null হবে না)
   const userEmail = session?.customer_details?.email || session?.customer_email;
+
+const backendUrl = process.env.NEXT_PUBLIC_SERVER_URL
+const res =  await fetch(`${backendUrl}/api/users/upgrade-premium/${userEmail}`, {
+          method: 'PATCH', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({
+          //   amount: session.amount_total / 100,      // সেন্ট থেকে মেইন কারেন্সিতে রূপান্তর
+          //   transactionId: session.id,               // স্ট্রাইপ সেশন আইডি
+          //   paymentStatus: session.payment_status,    // 'paid'
+          //   paymentType: 'stripe',
+          // }),
+        });
+
+        const data =await res.json();
+        console.log(data)
+  
     return (
   <div className="min-h-[85vh] flex items-center justify-center bg-amber-50/20 px-4 py-16">
       
